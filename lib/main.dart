@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo/Models/Task.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,8 +30,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late TextEditingController taskController;
-
-  List<String> task = [];
+  int id = 0;
+  List<Todo> task = [];
 
   @override
   void initState() {
@@ -48,23 +49,27 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       final todoTask = taskController.text;
       taskController.clear();
-      task.add(todoTask);
+      task.add(Todo(id: id, task: todoTask));
+      id++;
     });
   }
 
-  void deleteTask(String taskString) {
+  void deleteTask(int id) {
     setState(() {
-      task.removeWhere((element) => element == taskString);
+      task.removeWhere((element) => element.id == id);
     });
   }
 
-  Widget taskDisplay(String todoString) {
+  Widget taskDisplay(Todo todoString) {
     return ListTile(
       leading: const Icon(Icons.ac_unit),
-      title: Text(todoString),
+      title: Text(todoString.task),
       trailing: IconButton(
-          onPressed: () => deleteTask(todoString),
-          icon: const Icon(Icons.delete)),
+          onPressed: () => deleteTask(todoString.id),
+          icon: const Icon(
+            Icons.delete,
+            color: Colors.red,
+          )),
     );
   }
 
@@ -85,6 +90,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   Expanded(
                     child: TextFormField(
                       controller: taskController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
                   IconButton(
